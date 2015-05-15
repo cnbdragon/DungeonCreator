@@ -19,6 +19,8 @@ public class DungeonCreator {
         // TODO code application logic here
         DungeonCreator dc = new DungeonCreator();
         Map bob = new Map();
+        bob.sizeX = 20;
+        bob.sizeY = 20;
         dc.generate(bob);
     }
     

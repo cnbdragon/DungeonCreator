@@ -18,4 +18,7 @@ public class Map {
     String name;
     String description;
     
+    public String toString(){
+        return "string";
+    }
 }
