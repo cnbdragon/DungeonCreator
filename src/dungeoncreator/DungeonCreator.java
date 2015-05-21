@@ -5,6 +5,8 @@
  */
 package dungeoncreator;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 /**
  *
@@ -19,15 +21,28 @@ public class DungeonCreator {
         // TODO code application logic here
         DungeonCreator dc = new DungeonCreator();
         Map bob = new Map();
-        bob.sizeX = 20;
-        bob.sizeY = 20;
+        bob.sizeX = 25;
+        bob.sizeY = 25;
         dc.generate(bob);
+        System.out.print(bob.map);
     }
     
     public void generate( Map m){
         Random rand = new Random(100);
-        for(int i =0 ; i < 100; i++){
-            System.out.println(rand.nextInt(50));
+        for(int i=0 ; i < m.sizeX; i++){
+            List<String> nodes = new LinkedList<>();
+            for (int j=0; j < m.sizeY; j++){
+               //System.out.println(rand.nextInt(100)); 
+                if (rand.nextInt(100)<40){
+                    System.out.print("#");
+                    nodes.add("#");
+                } else {
+                    System.out.print(" ");
+                    nodes.add(" ");
+                }
+            } 
+            m.map.add(nodes);
+            System.out.println();
         }
         
     }

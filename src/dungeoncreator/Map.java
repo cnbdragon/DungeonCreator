@@ -5,7 +5,9 @@
  */
 package dungeoncreator;
 import java.util.Collections.*;
+import java.util.LinkedList;
 import java.util.Set;
+import java.util.List;
 /**
  *
  * @author jwulf
@@ -17,8 +19,15 @@ public class Map {
     int sizeY;
     String name;
     String description;
+    List<List<String>> map;
+    
+    Map(){
+        map = new LinkedList<>();
+    }
     
     public String toString(){
+        
         return "string";
+        
     }
 }
