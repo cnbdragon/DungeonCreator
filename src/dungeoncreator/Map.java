@@ -20,9 +20,11 @@ public class Map {
     String name;
     String description;
     List<List<String>> map;
+    List<Room> rooms;
     
     Map(){
         map = new LinkedList<>();
+        rooms = new LinkedList();
     }
     
     public String toString(){

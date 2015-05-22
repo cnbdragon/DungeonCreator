@@ -19,8 +19,6 @@ package dungeoncreator;
  *
  * @author cnbdr
  */
-
-
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
@@ -30,15 +28,15 @@ import java.util.logging.Logger;
 import javax.imageio.*;
 import javax.swing.*;
 
-
-
 /**
  * This class demonstrates how to load an Image from an external file
  */
 public class LoadImageApp extends Component {
-       
+
     int GRID_SIZE = 20;
-    
+    int GRID_X = 30;
+    int GRID_y = 30;
+
     BufferedImage img;
 
     public void paint(Graphics g) {
@@ -46,98 +44,138 @@ public class LoadImageApp extends Component {
     }
 
     public LoadImageApp() {
-       try {
-           img = ImageIO.read(new File("./test.jpg"));
-       } catch (IOException e) {
-           System.out.println(e);
-       }
-       this.buildImage();
-       this.addRoom(3, 5, 2, 6);
+        try {
+            img = ImageIO.read(new File("./test.jpg"));
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        DungeonCreator dc = new DungeonCreator();
+        Map m = new Map();
+        m.sizeX = 25;
+        m.sizeY = 25;
+        //dc.generate(m);
+        dc.generateRooms(m);
+        this.buildImage();
+        //this.addRoom(3, 5, 2, 6);
+        for (Room r : m.rooms) {
+            //this.addRoom(r);
+            System.out.println(r);
+            this.addRoom(r);
+        }
 
     }
 
     @Override
     public Dimension getPreferredSize() {
         if (img == null) {
-             return new Dimension(200,200);
+            return new Dimension(200, 200);
         } else {
-           return new Dimension(img.getWidth(null), img.getHeight(null));
-       }
+            return new Dimension(img.getWidth(null), img.getHeight(null));
+        }
     }
-    
+
     public void buildImage() {
         //BufferedImage off_Image
-               img = new BufferedImage(1010, 510,
-                        BufferedImage.TYPE_INT_ARGB);
-               
-               for (int i = 5; i<1005;i++){
-                    img.setRGB(i, 5, Color.BLACK.getRGB());
-               }
-               for (int i = 5; i<1005;i++){
-                    img.setRGB(i, 505, Color.BLACK.getRGB());
-               }
-               for (int i = 5; i<505;i++){
-                    img.setRGB(5, i, Color.BLACK.getRGB());
-               }
-               for (int i = 5; i<505;i++){
-                    img.setRGB(1005, i, Color.BLACK.getRGB());
-               }
-               
-               //grind
-               for (int i = 5+this.GRID_SIZE; i< 1000;i+=this.GRID_SIZE){
-                   for (int j = 5; j<505;j++){
-                       img.setRGB(i, j, Color.GRAY.getRGB());
-                   }
-               }
-               for (int i = 5; i< 1005;i++){
-                   for (int j = 5+this.GRID_SIZE; j<505;j+=this.GRID_SIZE){
-                       img.setRGB(i, j, Color.GRAY.getRGB());
-                   }
-               }
+        int tw = 10 + (this.GRID_SIZE * this.GRID_X);
+        int th = 10 + (this.GRID_SIZE * this.GRID_y);
+        img = new BufferedImage(tw, th,
+                BufferedImage.TYPE_INT_ARGB);
+        System.out.println(img.getHeight()+","+img.getWidth());
+        
+        //grind
+        for (int i = 5 + this.GRID_SIZE; i < tw-5; i += this.GRID_SIZE) {
+            for (int j = 5; j < tw-5; j++) {
+                img.setRGB(i, j, Color.GRAY.getRGB());
+            }
+        }
+        for (int i = 5; i < tw-5; i++) {
+            for (int j = 5 + this.GRID_SIZE; j < th-5; j += this.GRID_SIZE) {
+                img.setRGB(i, j, Color.GRAY.getRGB());
+            }
+        }
+        
+        //border
+        for (int i = 5; i < tw-5; i++) {
+            img.setRGB(i, 5, Color.BLACK.getRGB());
+        }
+        for (int i = 5; i <= tw-5; i++) {
+            img.setRGB(i, th-5, Color.BLACK.getRGB());
+        }
+        for (int i = 5; i < th-5; i++) {
+            img.setRGB(5, i, Color.BLACK.getRGB());
+        }
+        for (int i = 5; i <= th-5; i++) {
+            img.setRGB(tw-5, i, Color.BLACK.getRGB());
+        }
 
         //Graphics2D g2 = off_Image.createGraphics();
     }
 
-    public void addRoom(Room r){
-        addRoom(r.x,r.x+r.sizeX, r.y, r.y+r.sizeY);
+    public void addRoom(Room r) {
+        addRoom(r.x, r.x + r.sizeX, r.y, r.y + r.sizeY);
+        //room name
+        img = process(img, r);
     }
+
     public void addRoom(int x1, int x2, int y1, int y2) {
         //west wall
-        for (int i = 4 + (x1*this.GRID_SIZE); i <= 6 + (x1*this.GRID_SIZE); i++) {
-            for( int j = 5+(y1*this.GRID_SIZE); j < 5+(y2*this.GRID_SIZE);j++){
+        for (int i = 4 + (x1 * this.GRID_SIZE); i <= 6 + (x1 * this.GRID_SIZE); i++) {
+            for (int j = 5 + (y1 * this.GRID_SIZE); j < 5 + (y2 * this.GRID_SIZE); j++) {
                 img.setRGB(i, j, Color.RED.getRGB());
             }
         }
         //east wall
-        for (int i = 4 + (x2*this.GRID_SIZE); i <= 6 + (x2*this.GRID_SIZE); i++) {
-            for( int j = 5+(y1*this.GRID_SIZE); j < 5+(y2*this.GRID_SIZE);j++){
+        for (int i = 4 + (x2 * this.GRID_SIZE); i <= 6 + (x2 * this.GRID_SIZE); i++) {
+            for (int j = 5 + (y1 * this.GRID_SIZE); j < 5 + (y2 * this.GRID_SIZE); j++) {
                 img.setRGB(i, j, Color.RED.getRGB());
             }
         }
-        
-         //north wall
-        for (int i = 5 + (x1*this.GRID_SIZE); i <= 5 + (x2*this.GRID_SIZE); i++) {
-            for( int j = 4+(y1*this.GRID_SIZE); j <= 6+(y1*this.GRID_SIZE);j++){
+
+        //north wall
+        for (int i = 5 + (x1 * this.GRID_SIZE); i <= 5 + (x2 * this.GRID_SIZE); i++) {
+            for (int j = 4 + (y1 * this.GRID_SIZE); j <= 6 + (y1 * this.GRID_SIZE); j++) {
                 img.setRGB(i, j, Color.RED.getRGB());
             }
         }
         //south wall
-        for (int i = 5 + (x1*this.GRID_SIZE); i <= 5 + (x2*this.GRID_SIZE); i++) {
-            for( int j = 4+(y2*this.GRID_SIZE); j <= 6+(y2*this.GRID_SIZE);j++){
+        for (int i = 5 + (x1 * this.GRID_SIZE); i <= 5 + (x2 * this.GRID_SIZE); i++) {
+            for (int j = 4 + (y2 * this.GRID_SIZE); j <= 6 + (y2 * this.GRID_SIZE); j++) {
                 img.setRGB(i, j, Color.RED.getRGB());
             }
         }
         
+        
+
     }
+
+    private BufferedImage process(BufferedImage old, Room r) {
+        int w = old.getWidth();
+        int h = old.getHeight();
+        BufferedImage img = new BufferedImage(
+                w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = img.createGraphics();
+        g2d.drawImage(old, 0, 0, null);
+        g2d.setPaint(Color.BLUE);
+        g2d.setFont(new Font("Serif", Font.BOLD, 20));
+        String s = r.name;
+        FontMetrics fm = g2d.getFontMetrics();
+        int x = 5+(this.GRID_SIZE*r.x);
+        int y = 5+this.GRID_SIZE+(this.GRID_SIZE*r.y);//fm.getHeight();
+        g2d.drawString(s, x, y);
+        g2d.dispose();
+        return img;
+    }
+    
+    
     public static void main(String[] args) {
 
         JFrame f = new JFrame("Load Image Sample");
-            
-        f.addWindowListener(new WindowAdapter(){
-                public void windowClosing(WindowEvent e) {
-                    System.exit(0);
-                }
-            });
+
+        f.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
 
         String current;
         try {
@@ -146,10 +184,10 @@ public class LoadImageApp extends Component {
         } catch (IOException ex) {
             Logger.getLogger(LoadImageApp.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         String currentDir = System.getProperty("user.dir");
         System.out.println("Current dir using System:" + currentDir);
-        
+
         f.add(new LoadImageApp());
         f.pack();
         f.setVisible(true);
